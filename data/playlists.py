@@ -11,7 +11,7 @@ import random
 spectrogram_path = "/home/tobia/Documents/ML/Data MA Sono"
 spectrogram_type = ".png"
 playlists_path = "data/Playlists.csv"
-songfeatures_path = "data/songfeatures small.csv"
+songfeatures_path = "data/GenreOld.csv"
 
 """
 Imports a list of the songs in each playlist.
