@@ -20,7 +20,7 @@ Format of y_train: Similar Embedding ; Dissimilar Embedding ; Similar Decoder Ou
 """
 class OutputHelper:
 
-    def __init__(self, embedding_length, decoder_output_length):
+    def __init__(self, embedding_length, decoder_output_length):        
         self.embedding_length = embedding_length
         self.decoder_output_length = decoder_output_length
 
@@ -50,9 +50,9 @@ class OutputHelper:
     """
     def get_decoder_output(self, output):
         if len(output.shape) == 1:
-            return output[self.embedding_length : ]
+            return output[self.embedding_length : self.embedding_length + self.decoder_output_length]
         else:
-            return output[:, self.embedding_length : ]
+            return output[:, self.embedding_length : self.embedding_length + self.decoder_output_length]
 
 
     """
@@ -60,9 +60,9 @@ class OutputHelper:
     """
     def get_target_decoder_output(self, output):
         if len(output.shape) == 1:
-            return output[self.embedding_length + self.decoder_output_length:]
+            return output[self.embedding_length + self.decoder_output_length : ]
         else:
-            return output[:, 2 * self.embedding_length + self.decoder_output_length:]
+            return output[:, self.embedding_length + self.decoder_output_length : ]
 
 
     """

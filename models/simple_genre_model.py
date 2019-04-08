@@ -1,27 +1,50 @@
+from keras import backend as k
+from keras.models import Input, Model
+from keras.layers import Dense, Flatten, Conv2D, AveragePooling2D, Dropout, MaxPooling2D, Lambda, Concatenate, BatchNormalization
+
 """
-Builds a simple convnet for music similarity with a quadruplet cross-playlist encoder.
-Output format of the Keras model: Embedding ; Decoder Output
+Builds a simple convnet for music information retrieval out of a spectrogram.
 """
+def std_layer(x):
+    return k.var(x, axis=2, keepdims=True)
+def min_layer(x):
+    return k.min(x, axis=2, keepdims=True)
 
-import numpy as np
-from keras.models import Model
-from keras.layers import Input, Dense, Dropout, Flatten
-from keras.layers import Concatenate, BatchNormalization
+def build_model(input_shape, embedding_lenght, decoder_lenght):
+    height = input_shape[0]
+    width = input_shape[1]
 
-def build_model(input_shape, embedding_length):
-    input_layer = Input(shape=input_shape)
-    dense = Flatten()(input_layer)
-    dense = Dense(250, activation='relu')(dense)    
-    dense = BatchNormalization()(dense)
+    inputLayer = Input(input_shape)
+    convLayer1 = Conv2D(60, (height, 1), activation='relu', name='conv1')(inputLayer)
+    convLayer1 = BatchNormalization()(convLayer1)
+    convLayer2 = Conv2D(60, (1, 4), activation='relu', name='conv2')(convLayer1)
+    convLayer2 = BatchNormalization()(convLayer2)
+    convLayer3 = Conv2D(60, (1, 4), activation='relu', name='conv3')(convLayer2)
+    convLayer3 = BatchNormalization()(convLayer3)
 
-    encoder_output_layer = Dense(embedding_length, activation='sigmoid')(dense)
+    avg_layer1 = AveragePooling2D((1, width))(convLayer1)    
+    avg_layer2 = AveragePooling2D((1, width - 3))(convLayer2)
     
-    decoder_dense = Dense(250, activation='relu')(encoder_output_layer)    
-    decoder_dense = BatchNormalization()(decoder_dense)
-    decoder_output_layer = Dense(np.prod(input_shape), activation='sigmoid')(decoder_dense)    
+    avgLayer = AveragePooling2D((1, width - 6))(convLayer3)
+    maxLayer = MaxPooling2D((1, width - 6))(convLayer3)
+    stdLayer = Lambda(std_layer)(convLayer3)
 
-    output_layer = Concatenate()([encoder_output_layer, decoder_output_layer])
+    concatenatedAvg = Concatenate()([avg_layer1, avg_layer2, avgLayer])
+    concatenatedAvg = Flatten()(concatenatedAvg)
 
-    model = Model(inputs=input_layer, outputs=output_layer)
+    concatenated = Concatenate()([avgLayer, stdLayer, maxLayer])
+    flatten = Flatten()(concatenated)
+    dense = Dense(120, activation='relu', name='dense1')(flatten)
+    dense = BatchNormalization()(dense)
+    encoder_ouput = Dense(embedding_lenght, activation='sigmoid', name='dense2')(dense)
+
+    decoder_dense = Dense(120, activation='relu')(encoder_ouput)
+    decoder_output = Dense(decoder_lenght, activation='relu')(decoder_dense)
+
+    output = Concatenate()([encoder_ouput, decoder_output, concatenatedAvg])
+
+    model = Model(inputs=inputLayer, outputs=output)
+    
+    model.summary()
 
     return model
