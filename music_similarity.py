@@ -1,12 +1,12 @@
 """
-Trains a simple quadruplet cross-digit encoder on music similarity.
+Trains a simple quadruplet cross-song encoder on music similarity.
 """
 
 import numpy as np
 from random import shuffle
 from data.playlists import load_playlists
 from helper.dataset_tools import OutputHelper
-from helper.prepare_triplets import create_training_data_for_quadruplet_loss
+from helper.prepare_quadruplets import create_training_data_for_quadruplet_loss
 from models.simple_genre_model import build_model
 from helper.losses_similarity import Losses
 from keras.optimizers import SGD
