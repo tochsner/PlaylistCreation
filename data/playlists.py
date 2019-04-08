@@ -6,6 +6,7 @@ Data gets formatted for the use with Keras and few-shot learning.
 import keras
 from keras import utils
 import numpy as np
+import random
 #from skimage.io import imread
 
 def imread(path):
@@ -35,7 +36,16 @@ def load_spectrogram(uri, input_shape):
 
     spectrogram = spectrogram[-max_height:]
 
-    return spectrogram.reshape(input_shape)
+    return spectrogram
+
+
+def load_random_slice_of_spectrogram(uri, input_shape):
+    spectrogram = load_spectrogram(uri, input_shape)
+
+    width = spectrogram.shape[1]
+    start = int(random.random() * (width - input_shape[1]))
+
+    return spectrogram[:, start : start + input_shape[1]]
 
 
 songfeatures = {}

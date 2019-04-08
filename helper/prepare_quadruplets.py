@@ -2,7 +2,7 @@ import numpy as np
 import random
 
 from helper.losses import MeanSquareCostFunction
-from data.playlists import load_spectrogram
+from data.playlists import load_random_slice_of_spectrogram
 
 """
 Generates input and output pairs for performing similarity learning with Keras.
@@ -31,10 +31,12 @@ def create_training_data_for_quadruplet_loss(model, grouped_data, num_samples, i
                 main_index = random.choice(indexes)
                 second_index = random.choice([index for index in indexes if index != main_index])
 
-                main_sample1 = load_spectrogram(random.choice(grouped_data[main_index]), input_shape)
-                main_sample2 = load_spectrogram(random.choice(grouped_data[main_index]), input_shape)
-                second_sample1 = load_spectrogram(random.choice(grouped_data[second_index]), input_shape)
-                second_sample2 = load_spectrogram(random.choice(grouped_data[second_index]), input_shape)
+                main_sample1 = load_random_slice_of_spectrogram(random.choice(grouped_data[main_index]), input_shape)
+                main_sample2 = load_random_slice_of_spectrogram(random.choice(grouped_data[main_index]), input_shape)
+                second_sample1 = load_random_slice_of_spectrogram(random.choice(grouped_data[second_index]), input_shape)
+                second_sample2 = load_random_slice_of_spectrogram(random.choice(grouped_data[second_index]), input_shape)
+
+                print(main_sample1.shape)
 
                 exception = False
             except:
