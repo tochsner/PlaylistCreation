@@ -1,9 +1,9 @@
 from keras import backend as k
 from keras.models import Input, Model
-from keras.layers import Dense, Flatten, Conv2D, AveragePooling2D, Dropout, MaxPooling2D, Lambda, Concatenate, BatchNormalization
+from keras.layers import Dense, Flatten, Conv2D, AveragePooling2D, MaxPooling2D, Lambda, Concatenate, BatchNormalization
 
 """
-Builds a simple convnet for music information retrieval out of a spectrogram.
+Builds a convnet for msuic similarity learning with spectrograms.
 """
 def std_layer(x):
     return k.var(x, axis=2, keepdims=True)
@@ -43,8 +43,6 @@ def build_model(input_shape, embedding_lenght, decoder_lenght):
 
     output = Concatenate()([encoder_ouput, decoder_output, concatenatedAvg])
 
-    model = Model(inputs=inputLayer, outputs=output)
-    
-    model.summary()
+    model = Model(inputs=inputLayer, outputs=output)    
 
     return model

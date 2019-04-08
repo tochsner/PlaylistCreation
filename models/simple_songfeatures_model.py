@@ -1,6 +1,6 @@
 """
-Builds a simple convnet for music similarity with a quadruplet cross-playlist encoder.
-Output format of the Keras model: Embedding ; Decoder Output
+Builds a feed-forward for music similarity with a quadruplet cross-playlist encoder.
+Output format of the Keras model: Embedding ; Decoder Output ; Target Decoder Output.
 """
 
 import numpy as np

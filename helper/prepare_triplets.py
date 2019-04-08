@@ -6,11 +6,11 @@ from data.playlists import load_spectrogram
 
 """
 Generates input and output pairs for performing similarity learning with Keras.
-Based on quadruplet-selection.
-Output format of the Keras model: Embedding ; Decoder Output
+Based on quadruplet-selection if use_min_distance is True, otherwise on triplet-selection.
+Output format of the Keras model: Embedding ; Decoder Output ; Target Decoder Output
 Format of y_train: Similar Embedding ; Dissimilar Embedding ; Similar Decoder Output
 """
-def create_training_data_for_quadruplet_loss(model, grouped_data, num_samples, input_shape, output_helper, uses_min_distance = True):
+def create_training_data_for_quadruplet_loss(model, grouped_data, num_samples, input_shape, output_helper, use_min_distance = True):
     mse = MeanSquareCostFunction()
     
     num_classes = len(grouped_data)
@@ -27,18 +27,18 @@ def create_training_data_for_quadruplet_loss(model, grouped_data, num_samples, i
         exception = True
 
         while exception:
-            #try:
-            main_index = random.choice(indexes)
-            second_index = random.choice([index for index in indexes if index != main_index])
+            try:
+                main_index = random.choice(indexes)
+                second_index = random.choice([index for index in indexes if index != main_index])
 
-            main_sample1 = load_spectrogram(random.choice(grouped_data[main_index]), input_shape)
-            main_sample2 = load_spectrogram(random.choice(grouped_data[main_index]), input_shape)
-            second_sample1 = load_spectrogram(random.choice(grouped_data[second_index]), input_shape)
-            second_sample2 = load_spectrogram(random.choice(grouped_data[second_index]), input_shape)
+                main_sample1 = load_spectrogram(random.choice(grouped_data[main_index]), input_shape)
+                main_sample2 = load_spectrogram(random.choice(grouped_data[main_index]), input_shape)
+                second_sample1 = load_spectrogram(random.choice(grouped_data[second_index]), input_shape)
+                second_sample2 = load_spectrogram(random.choice(grouped_data[second_index]), input_shape)
 
-            exception = False
-            #except:
-             #   pass
+                exception = False
+            except:
+                pass
         
         outputs = model.predict(np.array([main_sample1, main_sample2, second_sample1, second_sample2]))
 
@@ -59,7 +59,7 @@ def create_training_data_for_quadruplet_loss(model, grouped_data, num_samples, i
 
         argmin = np.argmin(costs)
 
-        if not uses_min_distance:
+        if not use_min_distance:
             argmin = 0
 
         if argmin == 0:

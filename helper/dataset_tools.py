@@ -15,8 +15,8 @@ def split_list(original_list, r):
 
 """
 Helper class for everything related to the construction and reading out of the model output (y_pred) and y_true.
-Output format of the Keras model (y_pred): Embedding ; Decoder Output
-Format of y_train: Similar Embedding ; Dissimilar Embedding ; Similar Decoder Output
+Output format of the Keras model (y_pred): Embedding ; Decoder Output ; Target Decoder Output.
+Format of y_train: Similar Embedding ; Dissimilar Embedding ; Similar Decoder Output.
 """
 class OutputHelper:
 
