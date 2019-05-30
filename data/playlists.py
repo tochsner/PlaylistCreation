@@ -15,7 +15,7 @@ def imread(path):
 spectrogram_path = "/home/tobia/Documents/ML/Data MA Sono"
 spectrogram_type = ".png"
 playlists_path = "data/Playlists.csv"
-songfeatures_path = "data/GenreOld.csv"
+songfeatures_path = "data/songfeatures_sigmoid_small.csv"
 
 
 """
@@ -40,6 +40,8 @@ def load_spectrogram(uri, input_shape):
 
 
 def load_random_slice_of_spectrogram(uri, input_shape):
+    return load_songfeatures(uri, input_shape)    
+    
     spectrogram = load_spectrogram(uri, input_shape)
 
     width = spectrogram.shape[1]
@@ -60,8 +62,7 @@ def load_songfeatures(uri, input_shape):
         with open(songfeatures_path, "r") as f:
             for x in f.readlines():
                 a = x.strip().split(',')                
-                songfeatures[a[1]] = np.array(a[2:], dtype=np.float).reshape(input_shape) 
-                songfeatures[a[1]] = np.minimum(1, np.power(np.maximum(0, songfeatures[a[1]]), 1/2))                
+                songfeatures[a[1]] = np.array(a[2:], dtype=np.float).reshape(input_shape)                                                
 
         print(len(songfeatures), "songfeatures loaded.")
 
